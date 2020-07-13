@@ -2,11 +2,13 @@
   "name": "spotify-to-youtube",
   "version": "1.0.0",
   "description": "Parses Spotify links into YouTube links. Including Spotify playlists.",
-  "main": "src/index.ts",
+  "main": "dist/index.ts",
   "author": "TheFloppyBanana",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "lint": "eslint --fix --ext ts src",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "lavacord": "^1.1.9",
@@ -19,5 +21,8 @@
     "@typescript-eslint/parser": "^3.6.0",
     "eslint": "^7.4.0",
     "typescript": "^3.9.6"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
