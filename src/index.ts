@@ -41,14 +41,22 @@ export default class SpotifyParser {
 		const tracks: string[] = playlist.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
 		return tracks;
 	}
+
+	public async getTrack(id: string): Promise<string> {
+		const track: Track = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
+		const artists: string[] = track.artists.map(artist => artist.name);
+		return `${artists.join(", ")} - ${track.name}`;
+	}
 	
 }
 
 interface PlaylistItems {
-	track: {
-		artists: Artists[],
-		name: string
-	} 
+	track: Track
+}
+
+interface Track {
+	artists: Artists[],
+	name: string;
 }
 
 interface Artists {
