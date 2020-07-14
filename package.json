@@ -13,15 +13,15 @@
   "repository": "https://github.com/takomst/spotify-to-lavalink.git",
   "dependencies": {
     "lavacord": "^1.1.9",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "typescript": "^3.9.6"
   },
   "devDependencies": {
-    "@types/node": "^13.9.8",
     "@types/node-fetch": "^2.5.5",
+    "@types/node": "^13.9.8",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
-    "eslint": "^7.4.0",
-    "typescript": "^3.9.6"
+    "eslint": "^7.4.0"
   },
   "files": [
     "dist"
