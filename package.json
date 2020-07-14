@@ -1,6 +1,6 @@
 {
   "name": "spotify-to-youtube",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parses Spotify links into YouTube links. Including Spotify playlists.",
   "main": "dist/index.ts",
   "author": "TheFloppyBanana",
