@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc -p .",
     "lint": "eslint --fix --ext ts src",
-    "prepublishOnly": "yarn build"
+    "preinstall": "yarn build"
   },
   "repository": "https://github.com/takomst/spotify-to-lavalink.git",
   "dependencies": {
