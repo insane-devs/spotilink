@@ -1,7 +1,7 @@
 {
-  "name": "spotify-to-youtube",
+  "name": "spotify-to-lavalink",
   "version": "1.1.0",
-  "description": "Parses Spotify links into YouTube links. Including Spotify playlists.",
+  "description": "Parses Spotify links into Lavalink track objects.",
   "main": "dist/index.ts",
   "author": "TheFloppyBanana",
   "license": "MIT",
