@@ -10,6 +10,7 @@
     "lint": "eslint --fix --ext ts src",
     "prepublishOnly": "yarn build"
   },
+  "repository": "https://github.com/takomst/spotify-to-lavalink.git",
   "dependencies": {
     "lavacord": "^1.1.9",
     "node-fetch": "^2.6.0"
