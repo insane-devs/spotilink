@@ -1,45 +1,40 @@
-import fetch, { RequestInit } from "node-fetch";
-import { Manager } from "lavacord";
+import type { LavalinkNode } from "lavacord";
+import fetch from "node-fetch";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
 export default class SpotifyParser {
+	public nodes: LavalinkNode;
+	public id: string;
+	private secret: string;
+	private authorization: string;
+	private token: string|null;
+	private options: { headers: { "Content-Type": string; Authorization: string; }; };
 
-	private token: string;
-	private options: RequestInit
-
-	/**
-	 * Class to convert Spotify tracks and playlists into Lavalink track objects. 
-	 * @param LavacordClient The Lavacord client to convert parsed tracks into a Lavalink track object. 
-	 * @param token The Spotify API token
-	 */
-	constructor(LavacordClient: Manager,token: string) {
-		/**
-		 * The Spotify API bearer token.
-		 * @type {string}
-		 */
-		this.token = token;
-		/**
-		 * Default options for fetching the API.
-		 * @type {Object}
-		 */
+	constructor(LavalinkNode: LavalinkNode, clientID: string, clientSecret: string) {
+		this.nodes = LavalinkNode;
+		this.id = clientID;
+		this.secret = clientSecret;
+		this.authorization = Buffer.from(`${clientID}:${clientSecret}`).toString("base64");
+		this.token = null;
 		this.options = {
 			headers: {
 				"Content-Type": "application/json",
 				"Authorization": this.token
 			}
 		};
+
+		this.renewToken();
 	}
 
-	/**
-	 * Parse items from the playlist into a readable "Artists - Track" format.
-	 * @param id Spotify playlist ID.
-	 * @returns {Array} The parsed track names.
-	 */
+	public async getAlbum(id: string): Promise<string[]> {
+		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
+		return items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
+	}
+
 	public async getPlaylistTracks(id: string): Promise<string[]> {
-		const playlist: PlaylistItems[] = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json()).items;
-		const tracks: string[] = playlist.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
-		return tracks;
+		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
+		return items.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
 	}
 
 	public async getTrack(id: string): Promise<string> {
@@ -48,19 +43,37 @@ export default class SpotifyParser {
 		return `${artists.join(", ")} - ${track.name}`;
 	}
 	
+	private renewToken() {
+		setInterval(async () => {
+			const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
+				method: "POST",
+				body: "grant_type=client_credentials",
+				headers: {
+					Authorization: `Basic ${this.authorization}`,
+					"Content-Type": "application/x-www-form-urlencoded"
+				}
+			})).json();
+
+			this.token = access_token;
+		}, 1000 * 60 * 55);
+	}
+
 }
 
+interface Album {
+	items: [Track]
+}
 interface PlaylistItems {
-	track: Track
+	items: [{
+		track: Track
+	}]
 }
 
 interface Track {
-	artists: Artists[],
+	artists: Artist[],
 	name: string;
 }
 
-interface Artists {
+interface Artist {
 	name: string;
 }
-
-module.exports = SpotifyParser;
