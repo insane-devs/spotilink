@@ -7,21 +7,21 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -p .",
-    "lint": "eslint --fix --ext ts src",
-    "preinstall": "yarn build"
+    "lint": "eslint --fix --ext ts src"
   },
   "repository": "https://github.com/takomst/spotify-to-lavalink.git",
   "dependencies": {
     "lavacord": "^1.1.9",
-    "node-fetch": "^2.6.0",
-    "typescript": "^3.9.6"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.5",
     "@types/node": "^13.9.8",
+    "@types/node-fetch": "^2.5.5",
+    "@types/ws": "^7.2.6",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
-    "eslint": "^7.4.0"
+    "eslint": "^7.4.0",
+    "typescript": "^3.9.6"
   },
   "files": [
     "dist"
