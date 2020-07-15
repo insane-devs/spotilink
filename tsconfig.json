@@ -1,8 +1,13 @@
 {
     "compilerOptions": {
-        "outDir": "./dist",
         "allowJs": true,
-        "target": "es5"
+        "allowSyntheticDefaultImports": true,
+        "declaration": true,
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "pretty": true,
+        "target": "esnext",
+        "types": ["node", "node-fetch", "ws"]
     },
     "include": [
         "./src/**/*"
