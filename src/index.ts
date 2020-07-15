@@ -1,4 +1,4 @@
-import type { LavalinkNode } from "lavacord";
+import { LavalinkNode } from "lavacord";
 import fetch from "node-fetch";
 
 const BASE_URL = "https://api.spotify.com/v1";
