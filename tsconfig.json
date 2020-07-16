@@ -5,6 +5,7 @@
         "declaration": true,
         "declarationMap": true,
         "lib": ["esnext"],
+        "module": "commonjs",
         "moduleResolution": "node",
         "outDir": "./dist",
         "pretty": true,
