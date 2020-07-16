@@ -4,7 +4,7 @@ import { URLSearchParams } from "url";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
-export default class SpotifyParser {
+export class SpotifyParser {
 	public nodes: LavalinkNode;
 	public id: string;
 	private secret: string;
