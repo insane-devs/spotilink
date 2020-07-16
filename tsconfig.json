@@ -3,9 +3,12 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "declaration": true,
+        "declarationMap": true,
+        "lib": ["esnext"],
         "moduleResolution": "node",
         "outDir": "./dist",
         "pretty": true,
+        "strict": true,
         "target": "esnext",
         "types": ["node", "node-fetch", "ws"]
     },
