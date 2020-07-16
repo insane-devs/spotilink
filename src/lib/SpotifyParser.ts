@@ -1,5 +1,6 @@
 import { LavalinkNode } from "lavacord";
 import fetch from "node-fetch";
+import { URLSearchParams } from "url";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
@@ -61,6 +62,18 @@ export default class SpotifyParser {
 		return `${artists.join(", ")} - ${track.name}`;
 	}
 
+	public async fetchTrack(track: string): Promise<LavalinkTrack> {
+		const params = new URLSearchParams();
+		params.append("identifier", `ytsearch: ${track}`);
+		const { host, port, password } = this.nodes;
+		const { tracks } = (await (await fetch(`http://${host}:${port}/loadtracks?${params}`, {
+			headers: {
+				Authorization: password
+			}
+		})).json());
+		return tracks[0];
+	}
+
 	private async renewToken() {
 		const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
 			method: "POST",
@@ -85,6 +98,25 @@ export default class SpotifyParser {
 interface Album {
 	items: [Track]
 }
+
+interface Artist {
+	name: string;
+}
+
+interface LavalinkTrack {
+	track: string;
+	info: {
+		identifier: string,
+		isSeekable: boolean,
+		author: string,
+		length: number,
+		isStream: boolean,
+		position: number,
+		title: string,
+		uri: string
+	}
+}
+
 interface PlaylistItems {
 	items: [{
 		track: Track
@@ -93,9 +125,5 @@ interface PlaylistItems {
 
 interface Track {
 	artists: Artist[],
-	name: string;
-}
-
-interface Artist {
 	name: string;
 }
