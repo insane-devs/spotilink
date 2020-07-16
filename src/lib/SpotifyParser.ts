@@ -8,8 +8,8 @@ export default class SpotifyParser {
 	public id: string;
 	private secret: string;
 	private authorization: string;
-	private token: string | null;
-	private options: { headers: { "Content-Type": string; Authorization: string | null; }; };
+	private token: string;
+	private options: { headers: { "Content-Type": string; Authorization: string; }; };
 
 	/**
 	 * A class to convert Spotify URLs into Lavalink track objects.
@@ -22,15 +22,15 @@ export default class SpotifyParser {
 		this.id = clientID;
 		this.secret = clientSecret;
 		this.authorization = Buffer.from(`${clientID}:${clientSecret}`).toString("base64");
-		this.token = null;
+		this.token = "";
 		this.options = {
 			headers: {
 				"Content-Type": "application/json",
-				"Authorization": this.token
+				Authorization: this.token
 			}
 		};
 
-		this.renewToken();
+		this.init();
 	}
 
 	/**
@@ -61,19 +61,23 @@ export default class SpotifyParser {
 		return `${artists.join(", ")} - ${track.name}`;
 	}
 
-	private renewToken() {
-		setInterval(async () => {
-			const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
-				method: "POST",
-				body: "grant_type=client_credentials",
-				headers: {
-					Authorization: `Basic ${this.authorization}`,
-					"Content-Type": "application/x-www-form-urlencoded"
-				}
-			})).json();
+	private async renewToken() {
+		const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
+			method: "POST",
+			body: "grant_type=client_credentials",
+			headers: {
+				Authorization: `Basic ${this.authorization}`,
+				"Content-Type": "application/x-www-form-urlencoded"
+			}
+		})).json();
 
-			this.token = access_token;
-		}, 1000 * 60 * 55);
+		this.token = `Bearer ${access_token}`;
+		this.options.headers.Authorization = this.token;
+	}
+
+	private async init() {
+		await this.renewToken();
+		setInterval(await this.renewToken, 1000 * 60 * 55);
 	}
 
 }
