@@ -62,7 +62,11 @@ export default class SpotifyParser {
 		return `${artists.join(", ")} - ${track.name}`;
 	}
 
-	public async fetchTrack(track: string): Promise<LavalinkTrack> {
+	/**
+	 * Return a LavalinkTrack object from the track title.
+	 * @param track The track title to be taken from the Lavalink API
+	 */
+	public async fetchTrack(track: string): Promise<LavalinkTrack|null> {
 		const params = new URLSearchParams();
 		params.append("identifier", `ytsearch: ${track}`);
 		const { host, port, password } = this.nodes;
@@ -71,6 +75,7 @@ export default class SpotifyParser {
 				Authorization: password
 			}
 		})).json());
+		if (!tracks.length) return null;
 		return tracks[0];
 	}
 
