@@ -77,7 +77,7 @@ export class SpotifyParser {
 	 * Fetch the tracks from the album and return its artists and track name.
 	 * @param id The album ID.
 	 */
-	public async getAlbum(id: string): Promise<string[]> {
+	public async getAlbumTracks(id: string): Promise<string[]> {
 		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
 		return items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
 	}
