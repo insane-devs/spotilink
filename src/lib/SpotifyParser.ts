@@ -79,7 +79,7 @@ export class SpotifyParser {
 		return tracks[0];
 	}
 
-	private async renewToken() {
+	private async renewToken(): Promise<void> {
 		const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
 			method: "POST",
 			body: "grant_type=client_credentials",
@@ -95,7 +95,7 @@ export class SpotifyParser {
 
 	private async init() {
 		await this.renewToken();
-		setInterval(await this.renewToken, 1000 * 60 * 55);
+		setInterval(this.renewToken, 1000 * 60 * 55);
 	}
 
 }
