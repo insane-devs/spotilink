@@ -1,11 +1,50 @@
-import { LavalinkNode } from "lavacord";
 import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 
 const BASE_URL = "https://api.spotify.com/v1";
 
+export interface Node {
+	host: string;
+	port: string;
+	password: string;
+}
+
+export interface Album {
+	items: [Track];
+}
+
+export interface Artist {
+	name: string;
+}
+
+export interface LavalinkTrack {
+	track?: string;
+	info?: {
+		identifier: string;
+		isSeekable: boolean;
+		author: string;
+		length: number;
+		isStream: boolean;
+		position: number;
+		title: string;
+		uri: string;
+	}
+}
+
+export interface PlaylistItems {
+	items: [{
+		track: Track;
+	}];
+}
+
+export interface Track {
+	artists: Artist[];
+	name: string;
+}
+
+
 export class SpotifyParser {
-	public nodes: LavalinkNode;
+	public nodes: Node;
 	public id: string;
 	private secret: string;
 	private authorization: string;
@@ -14,11 +53,11 @@ export class SpotifyParser {
 
 	/**
 	 * A class to convert Spotify URLs into Lavalink track objects.
-	 * @param LavalinkNode A lavalink node to expose the lavalink API
+	 * @param Node A lavalink node to expose the lavalink API
 	 * @param clientID Your Spotify's client ID.
 	 * @param clientSecret Your Spotify's client secret.
 	 */
-	constructor(LavalinkNode: LavalinkNode, clientID: string, clientSecret: string) {
+	constructor(LavalinkNode: Node, clientID: string, clientSecret: string) {
 		this.nodes = LavalinkNode;
 		this.id = clientID;
 		this.secret = clientSecret;
@@ -98,37 +137,4 @@ export class SpotifyParser {
 		setInterval(this.renewToken, 1000 * 60 * 55);
 	}
 
-}
-
-interface Album {
-	items: [Track]
-}
-
-interface Artist {
-	name: string;
-}
-
-interface LavalinkTrack {
-	track: string;
-	info: {
-		identifier: string,
-		isSeekable: boolean,
-		author: string,
-		length: number,
-		isStream: boolean,
-		position: number,
-		title: string,
-		uri: string
-	}
-}
-
-interface PlaylistItems {
-	items: [{
-		track: Track
-	}]
-}
-
-interface Track {
-	artists: Artist[],
-	name: string;
 }
