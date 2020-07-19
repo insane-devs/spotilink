@@ -1,3 +1,7 @@
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 # spotify-to-lavalink
 
 A simple module to convert Spotify URLs into song titles for Lavalink to parse into track objects. No need to bother renewing your Spotify access token every time, because it will handle and renew your Spotify token for you.
@@ -40,9 +44,6 @@ await Promise.all(album.map(async (name) => tracks.push(await spotilink.fetchTra
 // SpotifyParser#fetchTrack will only return the track object, giving you complete freedom and control on how you handle the Lavalink tracks. :)
 ```
 
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
