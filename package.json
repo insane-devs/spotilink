@@ -2,14 +2,15 @@
   "name": "spotify-to-lavalink",
   "version": "1.1.1",
   "description": "Parses Spotify links into Lavalink track objects.",
-  "main": "dist/index.ts",
+  "main": "dist/index",
   "types": "dist/index.d.ts",
   "author": "TheFloppyBanana",
   "license": "MIT",
   "scripts": {
     "build": "tsc -p .",
     "lint": "eslint --fix --ext ts src",
-    "postinstall": "yarn build"
+    "test": "eslint --ext ts src"
+    "prepublishOnly": "yarn build"
   },
   "repository": "https://github.com/takomst/spotify-to-lavalink.git",
   "dependencies": {
@@ -26,5 +27,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "engines": {
+    "node": ">=10"
+  }
 }
