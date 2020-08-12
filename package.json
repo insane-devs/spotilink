@@ -26,7 +26,8 @@
     "typescript": "^3.9.6"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=10"
