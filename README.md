@@ -2,7 +2,7 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-# spotify-to-lavalink
+# spotilink
 
 A simple module to convert Spotify URLs into song titles for Lavalink to parse into track objects. No need to bother renewing your Spotify access token every time, because it will handle and renew your Spotify token for you.
 
@@ -10,9 +10,18 @@ A simple module to convert Spotify URLs into song titles for Lavalink to parse i
 - A Spotify app client. You can log in and create one in https://developer.spotify.com/dashboard
 - Lavalink API https://github.com/Frederikam/Lavalink
 
+### Installation
+```javascript
+// For npm
+npm install spotilink
+
+// For yarn
+yarn install spotilink
+```
+
 ### Simple Usage
 ```javascript
-const { SpotifyParser } = require('spotify-to-lavalink');
+const { SpotifyParser } = require('spotilink');
 
 const spotifyID = ''; // Your Spotify app client ID
 const spotifySecret = ''; // Your Spotify app client secret
@@ -22,7 +31,7 @@ const node = {
 	password: 'password'
 };
 
-const spotilink =  new SpotifyParser(node, spotifyID, spotifyID);
+const spotilink =  new SpotifyParser(node, spotifyID, spotifySecret);
 
 // Get a song title
 const song = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo'); // Surfaces - Sunday Best
