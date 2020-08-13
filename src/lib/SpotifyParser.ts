@@ -134,7 +134,7 @@ export class SpotifyParser {
 
 	private async init() {
 		await this.renewToken();
-		setInterval(this.renewToken, 1000 * 60 * 55);
+		setInterval(this.renewToken, 1000 * 60 * 60);
 	}
 
 }
