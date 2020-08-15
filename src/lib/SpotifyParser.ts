@@ -70,7 +70,7 @@ export class SpotifyParser {
 			}
 		};
 
-		this.init();
+		this.renew();
 	}
 
 	/**
@@ -118,8 +118,8 @@ export class SpotifyParser {
 		return tracks[0];
 	}
 
-	private async renewToken(): Promise<void> {
-		const { access_token }= await (await fetch("https://accounts.spotify.com/api/token", {
+	private async renewToken(): Promise<number> {
+		const { access_token, expires_in } = await (await fetch("https://accounts.spotify.com/api/token", {
 			method: "POST",
 			body: "grant_type=client_credentials",
 			headers: {
@@ -130,11 +130,13 @@ export class SpotifyParser {
 
 		this.token = `Bearer ${access_token}`;
 		this.options.headers.Authorization = this.token;
+
+		// Convert expires_in into ms
+		return expires_in * 1000;
 	}
 
-	private async init() {
-		await this.renewToken();
-		setInterval(this.renewToken, 1000 * 60 * 60);
+	private async renew(): Promise<void> {
+		setTimeout(this.renew, await this.renewToken());
 	}
 
 }
