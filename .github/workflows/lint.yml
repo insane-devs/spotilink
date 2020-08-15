@@ -16,6 +16,6 @@ jobs:
         run: |
           npm build --if-present
           npm install
-          npx eslint .
+          npx eslint --ext ts src
         env:
           CI: true
