@@ -1,0 +1,21 @@
+name: Linting
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: npx linting
+        run: |
+          npm build --if-present
+          npm install
+          npx eslint .
+        env:
+          CI: true
