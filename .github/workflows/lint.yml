@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v1
       - name: npx linting
         run: |
-          npm run build --if-present
           npm install
+          npm run build --if-present
           npx eslint --ext ts src
         env:
           CI: true
