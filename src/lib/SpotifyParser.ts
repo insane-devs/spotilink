@@ -70,7 +70,7 @@ export class SpotifyParser {
 			}
 		};
 
-		this.renew.bind(this);
+		this.renew.bind(this)();
 	}
 
 	/**
