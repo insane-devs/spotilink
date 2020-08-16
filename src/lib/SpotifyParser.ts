@@ -136,7 +136,7 @@ export class SpotifyParser {
 	}
 
 	private async renew(): Promise<void> {
-		setTimeout(this.renew, await this.renewToken());
+		setTimeout(this.renew.bind(this), await this.renewToken());
 	}
 
 }
