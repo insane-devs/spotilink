@@ -76,29 +76,51 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the album and return its artists and track name.
 	 * @param id The album ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
-	public async getAlbumTracks(id: string): Promise<string[]> {
+	public async getAlbumTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
 		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
-		return items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
+		const tracks = items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
+
+		if (convert) {
+			return Promise.all(tracks.map(async (title) => await this.fetchTrack(title)) as LavalinkTrack[]);
+		}
+
+		return tracks;
+
 	}
 
 	/**
 	 * Fetch the tracks from the playlist and return its artists and track name.
 	 * @param id The playlist ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
-	public async getPlaylistTracks(id: string): Promise<string[]> {
+	public async getPlaylistTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
 		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
-		return items.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
+		const tracks: string[] = items.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
+
+		if (convert) {
+			return Promise.all(tracks.map(async (title) => await this.fetchTrack(title)) as LavalinkTrack[]);
+		}
+
+		return tracks;
 	}
 
 	/**
 	 * Fetch the track and return its artist and title
 	 * @param id The song ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of track name.
 	 */
-	public async getTrack(id: string): Promise<string> {
+	public async getTrack(id: string, convert = false): Promise<string|LavalinkTrack> {
 		const track: Track = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
 		const artists: string[] = track.artists.map(artist => artist.name);
-		return `${artists.join(", ")} - ${track.name}`;
+		const title = `${artists.join(", ")} - ${track.name}`;
+
+		if (convert) {
+			return this.fetchTrack(title) as LavalinkTrack;
+		}
+
+		return title;
 	}
 
 	/**
