@@ -6,9 +6,6 @@
   "types": "dist/index.d.ts",
   "author": "TheFloppyBanana",
   "license": "MIT",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "scripts": {
     "build": "tsc -p .",
     "lint": "eslint --fix --ext ts src",
