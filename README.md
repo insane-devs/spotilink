@@ -34,13 +34,13 @@ const node = {
 const spotilink =  new SpotifyParser(node, spotifyID, spotifySecret);
 
 // Get a song title
-const song = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo'); // { artists: [ "Surfaces" ], name: "Sunday Best" }
+const song = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo'); // { track: "", info: { author: "Surfaces", title: "Surfaces - Sunday Best (Official Music Video)" }, ... }
 
 // Get all songs from an album
-const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ'); // [ { artists: [ "Kygo", "Valerie Broussard" ], name: "The Truth" }, ... ]
+const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ'); // [ { track: "", info: { ... } }, ... ]
 
 // Get all songs from a playlist
-const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF') // [ { arists: [ "Cardi B", "Megan Thee Stallion" ], name: "WAP (feat. Megan Thee Stallion)" }, ... ]
+const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF') // [ { track: "", info: { ... } }, ... ]
 
 // Fetch song from the Lavalink API
 const track = await spotilink.fetchTrack(song) // { track: "", info: {} }
@@ -51,19 +51,6 @@ const tracks = [];
 await Promise.all(album.map(async (name) => tracks.push(await spotilink.fetchTrack(name))));
 // 'tracks' will now contain Lavalink track objects.
 // SpotifyParser#fetchTrack will only return the track object, giving you complete freedom and control on how you handle the Lavalink tracks. :)
-```
----
-
-The following methods below, if `true` is passed on the second parameter will call `Spotilink#fetchTrack` and return a Lavalink object (an array of them for getAlbumTracks and getPlaylistTracks) instead of song titles and artists.
-```javascript
-// Get a song in the form of a Lavalink object.
-const lavalinkSong = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo', true);
-// Get all songs from an album in the form of an array of Lavalink objects.
-const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ', true);
-// Get all songs from a playlist in the form of an array of Lavalink objects.
-const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF', true);
-
-
 ```
 
 ## Contributors ✨
