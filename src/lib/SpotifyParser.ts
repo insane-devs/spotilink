@@ -10,7 +10,7 @@ export interface Node {
 }
 
 export interface Album {
-	items: [Track];
+	songs: SpotifyTrack[];
 }
 
 export interface Artist {
@@ -18,8 +18,8 @@ export interface Artist {
 }
 
 export interface LavalinkTrack {
-	track?: string;
-	info?: {
+	track: string;
+	info: {
 		identifier: string;
 		isSeekable: boolean;
 		author: string;
@@ -31,13 +31,17 @@ export interface LavalinkTrack {
 	}
 }
 
+export interface LavalinkSearchResult {
+	tracks: LavalinkTrack[];
+}
+
 export interface PlaylistItems {
 	items: [{
-		track: Track;
+		track: SpotifyTrack;
 	}];
 }
 
-export interface Track {
+export interface SpotifyTrack {
 	artists: Artist[];
 	name: string;
 }
@@ -78,19 +82,13 @@ export class SpotifyParser {
 	 * @param id The album ID.
 	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
-	public async getAlbumTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
+	public async getAlbumTracks(id: string): Promise<LavalinkTrack[]> {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
-		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
-		const tracks = items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
+		const { songs }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
 
-		if (convert) {
-			return Promise.all(tracks.map(async (title) => await this.fetchTrack(title)) as LavalinkTrack[]);
-		}
-
-		return tracks;
-
+		return Promise.all(songs.map(async (song) => await this.fetchTrack(song)) as unknown as LavalinkTrack[]);
 	}
 
 	/**
@@ -98,18 +96,13 @@ export class SpotifyParser {
 	 * @param id The playlist ID.
 	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
-	public async getPlaylistTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
+	public async getPlaylistTracks(id: string): Promise<LavalinkTrack[]> {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
 		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
-		const tracks: string[] = items.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
 
-		if (convert) {
-			return Promise.all(tracks.map(async (title) => await this.fetchTrack(title)) as LavalinkTrack[]);
-		}
-
-		return tracks;
+		return Promise.all(items.map(async (item) => await this.fetchTrack(item.track)) as unknown as LavalinkTrack[]);
 	}
 
 	/**
@@ -117,39 +110,51 @@ export class SpotifyParser {
 	 * @param id The song ID.
 	 * @param convert Whether to return results as Lavalink tracks instead of track name.
 	 */
-	public async getTrack(id: string, convert = false): Promise<string|LavalinkTrack> {
+	public async getTrack(id: string): Promise<LavalinkTrack> {
 		if (!id) throw new ReferenceError("The track ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
 
-		const track: Track = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
-		const artists: string[] = track.artists.map(artist => artist.name);
-		const title = `${artists.join(", ")} - ${track.name}`;
+		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
 
-		if (convert) {
-			return this.fetchTrack(title) as LavalinkTrack;
-		}
-
-		return title;
+		return this.fetchTrack(track) as unknown as LavalinkTrack;
 	}
 
 	/**
 	 * Return a LavalinkTrack object from the track title.
 	 * @param track The track title to be taken from the Lavalink API
 	 */
-	public async fetchTrack(track: string): Promise<LavalinkTrack|null> {
-		if (!track) throw new ReferenceError("The track title was not provided");
-		if (typeof track !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track}`);
+	public async fetchTrack(track: SpotifyTrack): Promise<LavalinkTrack|null> {
+		if (!track) throw ReferenceError("The Spotify track object was not provided");
+		if (!track.artists) throw ReferenceError("The track artists array was not provided");
+		if (!track.name) throw ReferenceError("The track name was not provided");
+		if (!Array.isArray(track.artists)) throw TypeError(`The track artists must be an array, received type ${typeof track.artists}`);
+		if (typeof track.name !== "string") throw TypeError(`The track name must be a string, received type ${typeof track.name}`);
+
+		const title = `${track.artists.map(artist => artist.name).join(", ")} - ${track.name}`;
 
 		const params = new URLSearchParams();
-		params.append("identifier", `ytsearch: ${track}`);
+		params.append("identifier", encodeURIComponent(`ytsearch: ${title}`));
+
 		const { host, port, password } = this.nodes;
-		const { tracks } = (await (await fetch(`http://${host}:${port}/loadtracks?${params}`, {
+		const { tracks } = await (await fetch(`http://${host}:${port}/loadtracks?${params}`, {
 			headers: {
 				Authorization: password
 			}
-		})).json());
+		})).json() as LavalinkSearchResult;
+
 		if (!tracks.length) return null;
-		return tracks[0];
+
+		return tracks
+			// prioritize music videos first (lowest priority)
+			.sort((a) => /(official)? ?(music)? ?video/i.test(a.info.title) ? -1 : 1)
+			// prioritize lyric videos first
+			.sort((a) => /(official)? ?lyrics? ?(video)?/i.test(a.info.title) ? -1 : 1)
+			// prioritize official audios first
+			.sort((a) => /(official)? ?audio/i.test(a.info.title) ? -1 : 1)
+			// prioritize channel name
+			.sort((a) => [track.artists[0].name, `${track.artists[0].name} - Topic`].includes(a.info.author) ? -1 : 1)
+			// prioritize if the video title is the same as the song title (highest priority)
+			.sort((a) => new RegExp(`^${track.name}$`, "i").test(a.info.title) ? -1 : 1)[0];
 	}
 
 	private async renewToken(): Promise<number> {
