@@ -127,11 +127,11 @@ export class SpotifyParser {
 	 * @param track The Spotify track object to be searched and compared against the Lavalink API
 	 */
 	public async fetchTrack(track: SpotifyTrack): Promise<LavalinkTrack|null> {
-		if (!track) throw ReferenceError("The Spotify track object was not provided");
-		if (!track.artists) throw ReferenceError("The track artists array was not provided");
-		if (!track.name) throw ReferenceError("The track name was not provided");
-		if (!Array.isArray(track.artists)) throw TypeError(`The track artists must be an array, received type ${typeof track.artists}`);
-		if (typeof track.name !== "string") throw TypeError(`The track name must be a string, received type ${typeof track.name}`);
+		if (!track) throw new ReferenceError("The Spotify track object was not provided");
+		if (!track.artists) throw new ReferenceError("The track artists array was not provided");
+		if (!track.name) throw new ReferenceError("The track name was not provided");
+		if (!Array.isArray(track.artists)) throw new TypeError(`The track artists must be an array, received type ${typeof track.artists}`);
+		if (typeof track.name !== "string") throw new TypeError(`The track name must be a string, received type ${typeof track.name}`);
 
 		const title = `${track.artists.map(artist => artist.name).join(", ")} - ${track.name}`;
 
