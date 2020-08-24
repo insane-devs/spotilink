@@ -80,7 +80,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the album and return its artists and track name.
 	 * @param id The album ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getAlbumTracks(id: string): Promise<LavalinkTrack[]> {
 		if (!id) throw new ReferenceError("The album ID was not provided");
@@ -94,7 +93,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the playlist and return its artists and track name.
 	 * @param id The playlist ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getPlaylistTracks(id: string): Promise<LavalinkTrack[]> {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
@@ -108,7 +106,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the track and return its artist and title
 	 * @param id The song ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track name.
 	 */
 	public async getTrack(id: string): Promise<LavalinkTrack> {
 		if (!id) throw new ReferenceError("The track ID was not provided");
@@ -121,7 +118,7 @@ export class SpotifyParser {
 
 	/**
 	 * Return a LavalinkTrack object from the track title.
-	 * @param track The track title to be taken from the Lavalink API
+	 * @param track The Spotify track object to be searched and compared against the Lavalink API
 	 */
 	public async fetchTrack(track: SpotifyTrack): Promise<LavalinkTrack|null> {
 		if (!track) throw ReferenceError("The Spotify track object was not provided");
