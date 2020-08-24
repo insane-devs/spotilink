@@ -147,10 +147,10 @@ export class SpotifyParser {
 
 		if (!tracks.length) return null;
 
-		return tracks
-			// prioritize channel name (lowest priority)
-			.sort((a) => [track.artists[0].name, `${track.artists[0].name} - Topic`].includes(a.info.author) ? -1 : 0)
-			// prioritize music videos first
+		const filteredTracks = tracks.filter(searchResult => [track.artists[0].name, `${track.artists[0].name} - Topic`].some(channelName => new RegExp(`^${channelName}$`, "i").test(searchResult.info.author)));
+
+		return (filteredTracks.length ? filteredTracks : tracks)
+			// prioritize music videos first (lowest priority)
 			.sort((a) => /(official)? ?(music)? ?video/i.test(a.info.title) ? -1 : 0)
 			// prioritize lyric videos first
 			.sort((a) => /(official)? ?lyrics? ?(video)?/i.test(a.info.title) ? -1 : 0)
