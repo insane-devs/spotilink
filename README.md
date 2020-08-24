@@ -16,7 +16,7 @@ A simple module to convert Spotify URLs into song titles for Lavalink to parse i
 npm install spotilink
 
 // For yarn
-yarn install spotilink
+yarn add spotilink
 ```
 
 ### Simple Usage
