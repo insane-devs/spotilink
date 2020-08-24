@@ -80,40 +80,46 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the album and return its artists and track name.
 	 * @param id The album ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
 	 */
-	public async getAlbumTracks(id: string): Promise<LavalinkTrack[]> {
+	public async getAlbumTracks(id: string, convert = false): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
 		const { songs }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
 
-		return Promise.all(songs.map(async (song) => await this.fetchTrack(song)) as unknown as LavalinkTrack[]);
+		if (convert) return Promise.all(songs.map(async (song) => await this.fetchTrack(song)) as unknown as LavalinkTrack[]);
+		return songs;
 	}
 
 	/**
 	 * Fetch the tracks from the playlist and return its artists and track name.
 	 * @param id The playlist ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
 	 */
-	public async getPlaylistTracks(id: string): Promise<LavalinkTrack[]> {
+	public async getPlaylistTracks(id: string, convert = false): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
 		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
 
-		return Promise.all(items.map(async (item) => await this.fetchTrack(item.track)) as unknown as LavalinkTrack[]);
+		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item.track)) as unknown as LavalinkTrack[]);
+		return items.map(item => item.track);
 	}
 
 	/**
 	 * Fetch the track and return its artist and title
 	 * @param id The song ID.
+	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
 	 */
-	public async getTrack(id: string): Promise<LavalinkTrack> {
+	public async getTrack(id: string, convert = false): Promise<LavalinkTrack|SpotifyTrack> {
 		if (!id) throw new ReferenceError("The track ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
 
 		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
 
-		return this.fetchTrack(track) as unknown as LavalinkTrack;
+		if (convert) return this.fetchTrack(track) as unknown as LavalinkTrack;
+		return track;
 	}
 
 	/**
