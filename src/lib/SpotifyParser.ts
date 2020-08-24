@@ -149,15 +149,15 @@ export class SpotifyParser {
 
 		return tracks
 			// prioritize music videos first (lowest priority)
-			.sort((a) => /(official)? ?(music)? ?video/i.test(a.info.title) ? -1 : 1)
+			.sort((a) => /(official)? ?(music)? ?video/i.test(a.info.title) ? -1 : 0)
 			// prioritize lyric videos first
-			.sort((a) => /(official)? ?lyrics? ?(video)?/i.test(a.info.title) ? -1 : 1)
+			.sort((a) => /(official)? ?lyrics? ?(video)?/i.test(a.info.title) ? -1 : 0)
 			// prioritize official audios first
-			.sort((a) => /(official)? ?audio/i.test(a.info.title) ? -1 : 1)
+			.sort((a) => /(official)? ?audio/i.test(a.info.title) ? -1 : 0)
 			// prioritize channel name
-			.sort((a) => [track.artists[0].name, `${track.artists[0].name} - Topic`].includes(a.info.author) ? -1 : 1)
+			.sort((a) => [track.artists[0].name, `${track.artists[0].name} - Topic`].includes(a.info.author) ? -1 : 0)
 			// prioritize if the video title is the same as the song title (highest priority)
-			.sort((a) => new RegExp(`^${track.name}$`, "i").test(a.info.title) ? -1 : 1)[0];
+			.sort((a) => new RegExp(`^${track.name}$`, "i").test(a.info.title) ? -1 : 0)[0];
 	}
 
 	private async renewToken(): Promise<number> {
