@@ -79,6 +79,9 @@ export class SpotifyParser {
 	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getAlbumTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
+		if (!id) throw new ReferenceError("The album ID was not provided");
+		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
+
 		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
 		const tracks = items.map(song => `${song.artists.map(artist => artist.name).join(", ")} - ${song.name}`);
 
@@ -96,6 +99,9 @@ export class SpotifyParser {
 	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getPlaylistTracks(id: string, convert = false): Promise<string[]|LavalinkTrack[]> {
+		if (!id) throw new ReferenceError("The playlist ID was not provided");
+		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
+
 		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
 		const tracks: string[] = items.map(item => `${item.track.artists.map(artist => artist.name).join(", ")} - ${item.track.name}`);
 
@@ -112,6 +118,9 @@ export class SpotifyParser {
 	 * @param convert Whether to return results as Lavalink tracks instead of track name.
 	 */
 	public async getTrack(id: string, convert = false): Promise<string|LavalinkTrack> {
+		if (!id) throw new ReferenceError("The track ID was not provided");
+		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
+
 		const track: Track = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
 		const artists: string[] = track.artists.map(artist => artist.name);
 		const title = `${artists.join(", ")} - ${track.name}`;
@@ -128,6 +137,9 @@ export class SpotifyParser {
 	 * @param track The track title to be taken from the Lavalink API
 	 */
 	public async fetchTrack(track: string): Promise<LavalinkTrack|null> {
+		if (!track) throw new ReferenceError("The track title was not provided");
+		if (typeof track !== "string") throw new TypeError(`The track title must be a string, received type ${typeof track}`);
+
 		const params = new URLSearchParams();
 		params.append("identifier", `ytsearch: ${track}`);
 		const { host, port, password } = this.nodes;
