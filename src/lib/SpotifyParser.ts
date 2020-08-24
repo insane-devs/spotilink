@@ -78,9 +78,9 @@ export class SpotifyParser {
 	}
 
 	/**
-	 * Fetch the tracks from the album and return its artists and track name.
+	 * Fetch the tracks from the album and return the SpotifyTrack or LavalinkTrack objects.
 	 * @param id The album ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
+	 * @param convert Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
 	 */
 	public async getAlbumTracks(id: string, convert = false): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The album ID was not provided");
@@ -93,9 +93,9 @@ export class SpotifyParser {
 	}
 
 	/**
-	 * Fetch the tracks from the playlist and return its artists and track name.
+	 * Fetch the tracks from the playlist and return the SpotifyTrack or LavalinkTrack objects.
 	 * @param id The playlist ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
+	 * @param convert Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
 	 */
 	public async getPlaylistTracks(id: string, convert = false): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
@@ -108,9 +108,9 @@ export class SpotifyParser {
 	}
 
 	/**
-	 * Fetch the track and return its artist and title
+	 * Fetch the track and return its SpotifyTrack or LavalinkTrack object.
 	 * @param id The song ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of Spotify track object.
+	 * @param convert Whether to return results as LavalinkTracks objects instead of SpotifyTrack objects.
 	 */
 	public async getTrack(id: string, convert = false): Promise<LavalinkTrack|SpotifyTrack> {
 		if (!id) throw new ReferenceError("The track ID was not provided");
@@ -123,8 +123,8 @@ export class SpotifyParser {
 	}
 
 	/**
-	 * Return a LavalinkTrack object from the track title.
-	 * @param track The Spotify track object to be searched and compared against the Lavalink API
+	 * Return a LavalinkTrack object from the SpotifyTrack object.
+	 * @param track The SpotifyTrack object to be searched and compared against the Lavalink API
 	 */
 	public async fetchTrack(track: SpotifyTrack): Promise<LavalinkTrack|null> {
 		if (!track) throw new ReferenceError("The Spotify track object was not provided");
