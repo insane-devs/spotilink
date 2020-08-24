@@ -136,7 +136,7 @@ export class SpotifyParser {
 		const title = `${track.artists.map(artist => artist.name).join(", ")} - ${track.name}`;
 
 		const params = new URLSearchParams();
-		params.append("identifier", encodeURIComponent(`ytsearch: ${title}`));
+		params.append("identifier", `ytsearch: ${title}`);
 
 		const { host, port, password } = this.nodes;
 		const { tracks } = await (await fetch(`http://${host}:${port}/loadtracks?${params}`, {
