@@ -80,7 +80,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the album and return its artists and track name.
 	 * @param id The album ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getAlbumTracks(id: string): Promise<LavalinkTrack[]> {
 		const { songs }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
@@ -91,7 +90,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the playlist and return its artists and track name.
 	 * @param id The playlist ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track names.
 	 */
 	public async getPlaylistTracks(id: string): Promise<LavalinkTrack[]> {
 		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
@@ -102,7 +100,6 @@ export class SpotifyParser {
 	/**
 	 * Fetch the track and return its artist and title
 	 * @param id The song ID.
-	 * @param convert Whether to return results as Lavalink tracks instead of track name.
 	 */
 	public async getTrack(id: string): Promise<LavalinkTrack> {
 		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
@@ -112,7 +109,7 @@ export class SpotifyParser {
 
 	/**
 	 * Return a LavalinkTrack object from the track title.
-	 * @param track The track title to be taken from the Lavalink API
+	 * @param track The Spotify track object to be searched and compared against the Lavalink API
 	 */
 	public async fetchTrack(track: SpotifyTrack): Promise<LavalinkTrack|null> {
 		const title = `${track.artists.map(artist => artist.name).join(", ")} - ${track.name}`;
