@@ -34,13 +34,13 @@ const node = {
 const spotilink =  new SpotifyParser(node, spotifyID, spotifySecret);
 
 // Get a song title
-const song = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo'); // Surfaces - Sunday Best
+const song = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo'); // { artists: [ "Surfaces" ], name: "Sunday Best" }
 
 // Get all songs from an album
-const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ'); // [ 'Kygo, Valerie Broussard - The Truth', 'OneRepublic, Kygo - Lose Somebody', ... ]
+const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ'); // [ { artists: [ "Kygo", "Valerie Broussard" ], name: "The Truth" }, ... ]
 
 // Get all songs from a playlist
-const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF') // [ 'Da Baby, Roddy Rich - ROCKSTAR', 'The Weeknd - Blinding Lights', ... ]
+const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF') // [ { arists: [ "Cardi B", "Megan Thee Stallion" ], name: "WAP (feat. Megan Thee Stallion)" }, ... ]
 
 // Fetch song from the Lavalink API
 const track = await spotilink.fetchTrack(song) // { track: "", info: {} }
@@ -58,10 +58,8 @@ The following methods below, if `true` is passed on the second parameter will ca
 ```javascript
 // Get a song in the form of a Lavalink object.
 const lavalinkSong = await spotilink.getTrack('1Cv1YLb4q0RzL6pybtaMLo', true);
-
 // Get all songs from an album in the form of an array of Lavalink objects.
 const album = await spotilink.getAlbumTracks('7tcs1X9pzFvcLOPuhCstQJ', true);
-
 // Get all songs from a playlist in the form of an array of Lavalink objects.
 const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF', true);
 
