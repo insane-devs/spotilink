@@ -10,7 +10,7 @@ export interface Node {
 }
 
 export interface Album {
-	songs: SpotifyTrack[];
+	items: SpotifyTrack[];
 }
 
 export interface Artist {
@@ -86,10 +86,10 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
-		const { songs }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
+		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
 
-		if (convert) return Promise.all(songs.map(async (song) => await this.fetchTrack(song)) as unknown as LavalinkTrack[]);
-		return songs;
+		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item)) as unknown as LavalinkTrack[]);
+		return items;
 	}
 
 	/**
