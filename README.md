@@ -1,6 +1,7 @@
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+[![npm](https://img.shields.io/npm/dt/spotilink)](https://npmjs.org/package/spotilink)
+[![npm](https://img.shields.io/npm/v/spotilink?label=npm%20package)](https://npmjs.org/package/spotilink)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat)](#contributors-)
+
 
 # spotilink
 
