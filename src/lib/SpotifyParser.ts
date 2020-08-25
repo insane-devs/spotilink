@@ -170,6 +170,8 @@ export class SpotifyParser {
 			}
 		})).json();
 
+		if (!access_token) throw Error("Invalid Spotify client.");
+
 		this.token = `Bearer ${access_token}`;
 		this.options.headers.Authorization = this.token;
 
