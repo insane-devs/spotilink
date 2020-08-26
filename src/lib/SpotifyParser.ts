@@ -44,6 +44,7 @@ export interface PlaylistItems {
 export interface SpotifyTrack {
 	artists: Artist[];
 	name: string;
+	duration_ms: number;
 }
 
 
@@ -133,7 +134,7 @@ export class SpotifyParser {
 		if (!Array.isArray(track.artists)) throw new TypeError(`The track artists must be an array, received type ${typeof track.artists}`);
 		if (typeof track.name !== "string") throw new TypeError(`The track name must be a string, received type ${typeof track.name}`);
 
-		const title = `${track.artists.map(artist => artist.name).join(", ")} - ${track.name}`;
+		const title = `${track.artists[0].name} - ${track.name}`;
 
 		const params = new URLSearchParams();
 		params.append("identifier", `ytsearch: ${title}`);
@@ -148,23 +149,17 @@ export class SpotifyParser {
 		if (!tracks.length) return null;
 
 		const regexEscape = (str: string): string => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-		const topResult = tracks[0];
-		const filteredTracks = tracks.filter(searchResult => [track.artists[0].name, `${track.artists[0].name} - Topic`].some(channelName => new RegExp(`^${regexEscape(channelName)}$`, "i").test(searchResult.info.author)));
 
-		return (filteredTracks.length ? filteredTracks : tracks)
-			.sort((a) => a.info.author === topResult.info.author ? 0 : 1)
-			.sort((a) => {
-				// prioritize if the video title is the same as the song title (highest priority)
-				if (new RegExp(`^${regexEscape(track.name)}$`, "i").test(a.info.title)) return 0;
-				// prioritize official audios first
-				else if (/official audio/i.test(a.info.title)) return 1;
-				// prioritize lyric videos first
-				else if (/lyrics? video/i.test(a.info.title)) return 2;
-				// prioritize music videos first
-				else if (/official (music )?video/i.test(a.info.title)) return 3;
-				
-				else return 4;
-			})[0];
+		const originalAudio = tracks.filter(searchResult => {
+			return [track.artists[0].name, `${track.artists[0].name} - Topic`].some(channelName => new RegExp(`^${regexEscape(channelName)}$`, "i").test(searchResult.info.author)) ||
+			new RegExp(`^${regexEscape(track.name)}$`, "i").test(searchResult.info.title);
+		})[0];
+		if (originalAudio) return originalAudio;
+
+		const sameDuration = tracks.filter(searchResult => (searchResult.info.length >= (track.duration_ms - 1500)) && (searchResult.info.length <= (track.duration_ms + 1500)))[0];
+		if (sameDuration) return sameDuration;
+
+		return tracks[0];
 	}
 
 	private async renewToken(): Promise<number> {
