@@ -148,17 +148,23 @@ export class SpotifyParser {
 		if (!tracks.length) return null;
 
 		const regexEscape = (str: string): string => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		const topResult = tracks[0];
 		const filteredTracks = tracks.filter(searchResult => [track.artists[0].name, `${track.artists[0].name} - Topic`].some(channelName => new RegExp(`^${regexEscape(channelName)}$`, "i").test(searchResult.info.author)));
 
 		return (filteredTracks.length ? filteredTracks : tracks)
-			// prioritize music videos first (lowest priority)
-			.sort((a) => /(official)? ?(music)? ?video/i.test(a.info.title) ? -1 : 0)
-			// prioritize lyric videos first
-			.sort((a) => /(official)? ?lyrics? ?(video)?/i.test(a.info.title) ? -1 : 0)
-			// prioritize official audios first
-			.sort((a) => /(official)? ?audio/i.test(a.info.title) ? -1 : 0)
-			// prioritize if the video title is the same as the song title (highest priority)
-			.sort((a) => new RegExp(`^${regexEscape(track.name)}$`, "i").test(a.info.title) ? -1 : 0)[0];
+			.sort((a) => a.info.author === topResult.info.author ? 0 : 1)
+			.sort((a) => {
+				// prioritize if the video title is the same as the song title (highest priority)
+				if (new RegExp(`^${regexEscape(track.name)}$`, "i").test(a.info.title)) return 0;
+				// prioritize official audios first
+				else if (/official audio/i.test(a.info.title)) return 1;
+				// prioritize lyric videos first
+				else if (/lyrics? video/i.test(a.info.title)) return 2;
+				// prioritize music videos first
+				else if (/official (music )?video/i.test(a.info.title)) return 3;
+				
+				else return 4;
+			})[0];
 	}
 
 	private async renewToken(): Promise<number> {
