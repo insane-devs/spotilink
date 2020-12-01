@@ -49,6 +49,7 @@ export interface SpotifyTrack {
 
 export interface FetchOptions {
 	prioritizeSameDuration: boolean;
+	customFilter(lavalinkTrack: LavalinkTrack, spotifyTrack: SpotifyTrack): boolean;
 }
 
 
@@ -131,7 +132,7 @@ export class SpotifyParser {
 	 * Return a LavalinkTrack object from the SpotifyTrack object.
 	 * @param track The SpotifyTrack object to be searched and compared against the Lavalink API
 	 */
-	public async fetchTrack(track: SpotifyTrack, fetchOptions = { prioritizeSameDuration: false } as FetchOptions): Promise<LavalinkTrack|null> {
+	public async fetchTrack(track: SpotifyTrack, fetchOptions = { prioritizeSameDuration: false, customFilter: () => true } as FetchOptions): Promise<LavalinkTrack|null> {
 		if (!track) throw new ReferenceError("The Spotify track object was not provided");
 		if (!track.artists) throw new ReferenceError("The track artists array was not provided");
 		if (!track.name) throw new ReferenceError("The track name was not provided");
@@ -157,7 +158,7 @@ export class SpotifyParser {
 			if (sameDuration) return sameDuration;
 		}
 
-		return tracks[0];
+		return tracks.filter(async searchResult => fetchOptions.customFilter(searchResult, track))[0];
 	}
 
 	private async renewToken(): Promise<number> {
