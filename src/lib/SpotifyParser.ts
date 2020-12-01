@@ -50,6 +50,7 @@ export interface SpotifyTrack {
 export interface FetchOptions {
 	prioritizeSameDuration: boolean;
 	customFilter(lavalinkTrack: LavalinkTrack, spotifyTrack: SpotifyTrack): boolean;
+	customSort(comparableTrack: LavalinkTrack, compareToTrack: LavalinkTrack): number;
 }
 
 
@@ -132,7 +133,7 @@ export class SpotifyParser {
 	 * Return a LavalinkTrack object from the SpotifyTrack object.
 	 * @param track The SpotifyTrack object to be searched and compared against the Lavalink API
 	 */
-	public async fetchTrack(track: SpotifyTrack, fetchOptions = { prioritizeSameDuration: false, customFilter: () => true } as FetchOptions): Promise<LavalinkTrack|null> {
+	public async fetchTrack(track: SpotifyTrack, fetchOptions = { prioritizeSameDuration: false, customFilter: () => true, customSort: () => 0 } as FetchOptions): Promise<LavalinkTrack|null> {
 		if (!track) throw new ReferenceError("The Spotify track object was not provided");
 		if (!track.artists) throw new ReferenceError("The track artists array was not provided");
 		if (!track.name) throw new ReferenceError("The track name was not provided");
@@ -158,7 +159,12 @@ export class SpotifyParser {
 			if (sameDuration) return sameDuration;
 		}
 
-		return tracks.filter(async searchResult => fetchOptions.customFilter(searchResult, track))[0];
+		if (typeof fetchOptions.customFilter === "undefined") fetchOptions.customFilter = () => true;
+		if (typeof fetchOptions.customSort === "undefined") fetchOptions.customSort = () => 0;
+
+		return tracks
+			.filter(searchResult => fetchOptions.customFilter(searchResult, track))
+			.sort((comparableTrack, compareToTrack) => fetchOptions.customSort(comparableTrack, compareToTrack))[0];
 	}
 
 	private async renewToken(): Promise<number> {
