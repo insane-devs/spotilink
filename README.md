@@ -68,7 +68,7 @@ const playlist = await spotilink.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF', tru
 
 You can use custom functions to manipulate the search results.
 For the three main methods used, you can pass an object containing the functions for filtering and sorting.
-By default, no filtering and sorting takes place. This means that whichever the first track that Lavalink may have received will be returned.
+By default, no filtering and sorting takes place — whichever track that Lavalink may have received first will be returned.
 ```javascript
 // Prioritize Lavalink tracks with the same duration as the Spotify track.
 spotilink.getTrack('track ID', , { prioritizeSameDuration: true });
@@ -79,7 +79,8 @@ spotilink.getAlbumTracks('album ID', , { customFilter: (lavalinkTrack, spotifyTr
 
 // Use a custom synchronous function for sorting search results
 // The synchronous function being passed must return a number type variable
-spotilink.getPlaylistTracks('playlist ID', , { customSort: (comparableTrack, compareToTrack, spotifyTrack) => lavalinkTrack.info.title === spotifyTrack.name ? -1 : 1 })
+// Variables `comparableTrack` and `compareToTrack` are of LavalinkTrack types
+spotilink.getPlaylistTracks('playlist ID', , { customSort: (comparableTrack, compareToTrack, spotifyTrack) => comparableTrack.info.title === spotifyTrack.name ? -1 : 1 })
 ```
 Please note that if you use the option `prioritizeSameDuration`, the other options mentioned will be unused. The options `customFilter` and `customSort` however, may be used together as long as `prioritizeSameDuration` is set to `false`.
 
