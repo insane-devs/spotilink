@@ -85,7 +85,7 @@ export class SpotifyParser {
 	 * @param id The album ID.
 	 * @param convert Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
 	 */
-	public async getAlbumTracks(id: string, convert = false, fetchOptions = { prioritizeSameDuration: false } as FetchOptions): Promise<LavalinkTrack[]|SpotifyTrack[]> {
+	public async getAlbumTracks(id: string, convert = false, fetchOptions: FetchOptions): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
@@ -100,7 +100,7 @@ export class SpotifyParser {
 	 * @param id The playlist ID.
 	 * @param convert Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
 	 */
-	public async getPlaylistTracks(id: string, convert = false, fetchOptions = { prioritizeSameDuration: false } as FetchOptions): Promise<LavalinkTrack[]|SpotifyTrack[]> {
+	public async getPlaylistTracks(id: string, convert = false, fetchOptions: FetchOptions): Promise<LavalinkTrack[]|SpotifyTrack[]> {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
@@ -115,7 +115,7 @@ export class SpotifyParser {
 	 * @param id The song ID.
 	 * @param convert Whether to return results as LavalinkTracks objects instead of SpotifyTrack objects.
 	 */
-	public async getTrack(id: string, convert = false, fetchOptions = { prioritizeSameDuration: false } as FetchOptions): Promise<LavalinkTrack|SpotifyTrack> {
+	public async getTrack(id: string, convert = false, fetchOptions: FetchOptions): Promise<LavalinkTrack|SpotifyTrack> {
 		if (!id) throw new ReferenceError("The track ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
 
