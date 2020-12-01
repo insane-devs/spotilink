@@ -78,7 +78,7 @@ spotilink.getTrack('track ID', , { prioritizeSameDuration: true });
 spotilink.getAlbumTracks('album ID', , { customFilter: (lavalinkTrack, spotifyTrack) => lavalinkTrack.info.title === spotifyTrack.name })
 
 // Use a custom synchronous function for sorting search results
-// The symchronous function being passed must return a number type variable
+// The synchronous function being passed must return a number type variable
 spotilink.getPlaylistTracks('playlist ID', , { customSort: (comparableTrack, compareToTrack, spotifyTrack) => lavalinkTrack.info.title === spotifyTrack.name ? -1 : 1 })
 ```
 Please note that if you use the option `prioritizeSameDuration`, the other options mentioned will be unused. The options `customFilter` and `customSort` however, may be used together as long as `prioritizeSameDuration` is set to `false`.
