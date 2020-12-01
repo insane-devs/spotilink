@@ -50,7 +50,7 @@ export interface SpotifyTrack {
 export interface FetchOptions {
 	prioritizeSameDuration: boolean;
 	customFilter(lavalinkTrack: LavalinkTrack, spotifyTrack: SpotifyTrack): boolean;
-	customSort(comparableTrack: LavalinkTrack, compareToTrack: LavalinkTrack): number;
+	customSort(comparableTrack: LavalinkTrack, compareToTrack: LavalinkTrack, spotifyTrack: SpotifyTrack): number;
 }
 
 
@@ -160,7 +160,7 @@ export class SpotifyParser {
 
 		return tracks
 			.filter(searchResult => fetchOptions.customFilter(searchResult, track))
-			.sort((comparableTrack, compareToTrack) => fetchOptions.customSort(comparableTrack, compareToTrack))[0];
+			.sort((comparableTrack, compareToTrack) => fetchOptions.customSort(comparableTrack, compareToTrack, track))[0];
 	}
 
 	private async renewToken(): Promise<number> {
