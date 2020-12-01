@@ -56,8 +56,6 @@ export interface FetchOptions {
 
 export class SpotifyParser {
 	public nodes: Node;
-	public id: string;
-	private secret: string;
 	private authorization: string;
 	private token: string;
 	private options: { headers: { "Content-Type": string; Authorization: string; }; };
@@ -70,8 +68,6 @@ export class SpotifyParser {
 	 */
 	constructor(LavalinkNode: Node, clientID: string, clientSecret: string) {
 		this.nodes = LavalinkNode;
-		this.id = clientID;
-		this.secret = clientSecret;
 		this.authorization = Buffer.from(`${clientID}:${clientSecret}`).toString("base64");
 		this.token = "";
 		this.options = {
