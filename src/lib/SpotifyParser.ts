@@ -41,6 +41,12 @@ export interface PlaylistItems {
 	}];
 }
 
+export interface PlaylistInfo {
+	tracks: {
+		total: number;
+	}
+}
+
 export interface SpotifyTrack {
 	artists: Artist[];
 	name: string;
@@ -119,7 +125,7 @@ export class SpotifyParser {
 	/**
 	 * Fetch the tracks from the album and return the SpotifyTrack or LavalinkTrack objects.
 	 * @param {string} id The album ID.
-	 * @param {boolean} convert - Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
+	 * @param {boolean} convert Whether to return results as LavalinkTrack objects instead of SpotifyTrack objects.
 	 * @param {FetchOptions} fetchOptions An object containing the options for fetching Lavalink tracks with the Spotify tracks.
 	 * @returns {Promise<LavalinkTrack[]|SpotifyTrack[]>} The promisified array of the tracks in the playlist, in the form of a Lavalink Track object (if converted) or a Spotify Track object.
 	 */
@@ -127,7 +133,17 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
-		const { items }: PlaylistItems = (await (await fetch(`${BASE_URL}/playlists/${id}/tracks`, this.options)).json());
+		const playlistInfo: PlaylistInfo = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
+		const sets = Math.ceil(playlistInfo.tracks.total / 100);
+
+		const items: PlaylistItems["items"] = [{ track: { artists: [], name: "", duration_ms: 0 } }];
+		for (let set = 0; set < sets; set++) {
+			const params = new URLSearchParams();
+			params.set("limit", "100");
+			params.set("offset", String(set * 100));
+			if (set === 0) items.unshift();
+			items.push(await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json());
+		}
 
 		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item.track, fetchOptions)) as unknown as LavalinkTrack[]);
 		return items.map(item => item.track);
