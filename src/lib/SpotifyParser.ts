@@ -142,7 +142,7 @@ export class SpotifyParser {
 			params.set("limit", "100");
 			params.set("offset", String(set * 100));
 			if (set === 0) items.unshift();
-			items.push(await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json());
+			items.concat((await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json()).items);
 		}
 
 		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item.track, fetchOptions)) as unknown as LavalinkTrack[]);
