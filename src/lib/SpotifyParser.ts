@@ -136,13 +136,13 @@ export class SpotifyParser {
 		const playlistInfo: PlaylistInfo = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
 		const sets = Math.ceil(playlistInfo.tracks.total / 100);
 
-		const items: PlaylistItems["items"] = [{ track: { artists: [], name: "", duration_ms: 0 } }];
+		let items: PlaylistItems["items"] = [{ track: { artists: [], name: "", duration_ms: 0 } }];
 		for (let set = 0; set < sets; set++) {
 			const params = new URLSearchParams();
 			params.set("limit", "100");
 			params.set("offset", String(set * 100));
 			if (set === 0) items.unshift();
-			items.concat((await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json()).items);
+			items = items.concat((await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json()).items) as PlaylistItems["items"];
 		}
 
 		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item.track, fetchOptions)) as unknown as LavalinkTrack[]);
