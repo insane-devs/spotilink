@@ -35,16 +35,14 @@ export interface LavalinkSearchResult {
 	tracks: LavalinkTrack[];
 }
 
-export interface PlaylistItems {
-	items: [{
-		track: SpotifyTrack;
-	}];
-}
-
-export interface PlaylistInfo {
+export interface SpotifyPlaylist {
 	tracks: {
 		total: number;
 	}
+}
+
+export interface PlaylistItems {
+	items: [{ track: SpotifyTrack }];
 }
 
 export interface SpotifyTrack {
@@ -133,20 +131,21 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
-		const playlistInfo: PlaylistInfo = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
+		const playlistInfo: SpotifyPlaylist = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
 		const sets = Math.ceil(playlistInfo.tracks.total / 100);
 
-		let items: PlaylistItems["items"] = [{ track: { artists: [], name: "", duration_ms: 0 } }];
+		let items: SpotifyTrack[] = [];
 		for (let set = 0; set < sets; set++) {
 			const params = new URLSearchParams();
 			params.set("limit", "100");
 			params.set("offset", String(set * 100));
+			const tracks = await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json() as PlaylistItems;
+			items = items.concat(tracks.items.map(item => item.track));
 			if (set === 0) items.unshift();
-			items = items.concat((await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json()).items) as PlaylistItems["items"];
 		}
 
-		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item.track, fetchOptions)) as unknown as LavalinkTrack[]);
-		return items.map(item => item.track);
+		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item, fetchOptions)) as unknown as LavalinkTrack[]);
+		return items;
 	}
 
 	/**
