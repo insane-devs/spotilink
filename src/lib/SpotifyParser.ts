@@ -132,13 +132,13 @@ export class SpotifyParser {
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
 		const playlistInfo: SpotifyPlaylist = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
-		const sets = Math.ceil(playlistInfo.tracks.total / 100);
+		const sets = Math.ceil(playlistInfo.tracks.total / 50);
 
 		let items: SpotifyTrack[] = [];
 		for (let set = 0; set < sets; set++) {
 			const params = new URLSearchParams();
-			params.set("limit", "100");
-			params.set("offset", String(set * 100));
+			params.set("limit", "50");
+			params.set("offset", String(set * 50));
 			const tracks = await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json() as PlaylistItems;
 			items = items.concat(tracks.items.map(item => item.track));
 			if (set === 0) items.unshift();
