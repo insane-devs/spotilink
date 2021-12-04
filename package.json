@@ -12,7 +12,7 @@
     "test": "eslint --ext ts src",
     "prepublishOnly": "yarn build"
   },
-  "repository": "https://github.com/takomst/spotilink.git",
+  "repository": "https://github.com/insane-devs/spotilink.git",
   "dependencies": {
     "@types/node": "^13.9.8",
     "@types/node-fetch": "^2.5.5",
