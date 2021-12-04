@@ -1,6 +1,6 @@
 {
   "name": "spotilink",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Parses Spotify links into Lavalink track objects.",
   "main": "dist/index",
   "types": "dist/index.d.ts",
