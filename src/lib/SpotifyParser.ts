@@ -115,7 +115,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
-		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json());
+		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json()) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item, fetchOptions)) as unknown as LavalinkTrack[]);
 		return items;
@@ -132,7 +132,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
-		const playlistInfo: SpotifyPlaylist = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json();
+		const playlistInfo: SpotifyPlaylist = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 		const sets = Math.ceil(playlistInfo.tracks.total / 50);
 
 		let items: SpotifyTrack[] = [];
@@ -160,7 +160,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The track ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
 
-		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json());
+		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json()) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		if (convert) return this.fetchTrack(track, fetchOptions) as unknown as LavalinkTrack;
 		return track;
@@ -214,7 +214,7 @@ export class SpotifyParser {
 				Authorization: `Basic ${this.authorization}`,
 				"Content-Type": "application/x-www-form-urlencoded"
 			}
-		})).json();
+		})).json() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		if (!access_token) throw new Error("Invalid Spotify client.");
 
