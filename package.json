@@ -1,13 +1,13 @@
 {
   "name": "spotilink",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "description": "Parses Spotify links into Lavalink track objects.",
   "main": "dist/index",
   "types": "dist/index.d.ts",
   "author": "TheFloppyBanana",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc --module esnext -p .",
     "lint": "eslint --fix --ext ts src",
     "test": "eslint --ext ts src",
     "prepublishOnly": "yarn build"
