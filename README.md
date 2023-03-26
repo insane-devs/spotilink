@@ -9,7 +9,7 @@ A simple module to convert Spotify URLs into song titles for Lavalink to parse i
 
 ### Prerequisites
 - A Spotify app client. You can log in and create one in https://developer.spotify.com/dashboard
-- Lavalink API https://github.com/Frederikam/Lavalink
+- Lavalink API https://github.com/freyacodes/Lavalink
 
 ### Installation
 ```javascript
