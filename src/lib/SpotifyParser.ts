@@ -1,7 +1,7 @@
-import fetch from "node-fetch";
+import { fetch } from "undici";
 import { URLSearchParams } from "url";
 
-const BASE_URL = "https://api.spotify.com/v1";
+const SPOTIFY_BASE_URL = "https://api.spotify.com/v1";
 
 export interface Node {
 	host: string;
@@ -18,7 +18,7 @@ export interface Artist {
 }
 
 export interface LavalinkTrack {
-	track: string;
+	encoded: string;
 	info: {
 		identifier: string;
 		isSeekable: boolean;
@@ -31,8 +31,17 @@ export interface LavalinkTrack {
 	}
 }
 
+export enum LoadType {
+    TRACK = "track",
+    PLAYLIST = "playlist",
+    SEARCH = "search",
+    EMPTY = "empty",
+    ERROR = "error"
+}
+
 export interface LavalinkSearchResult {
-	tracks: LavalinkTrack[];
+	loadType: LoadType.SEARCH
+	data: LavalinkTrack[]
 }
 
 export interface SpotifyPlaylist {
@@ -115,7 +124,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The album ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The album ID must be a string, received type ${typeof id}`);
 
-		const { items }: Album = (await (await fetch(`${BASE_URL}/albums/${id}/tracks`, this.options)).json()) as Album;
+		const { items }: Album = (await (await fetch(`${SPOTIFY_BASE_URL}/albums/${id}/tracks`, this.options)).json()) as Album;
 
 		if (convert) return Promise.all(items.map(async (item) => await this.fetchTrack(item, fetchOptions)) as unknown as LavalinkTrack[]);
 		return items;
@@ -132,7 +141,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The playlist ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The playlist ID must be a string, received type ${typeof id}`);
 
-		const playlistInfo: SpotifyPlaylist = await (await fetch(`${BASE_URL}/playlists/${id}`, this.options)).json() as SpotifyPlaylist;
+		const playlistInfo: SpotifyPlaylist = await (await fetch(`${SPOTIFY_BASE_URL}/playlists/${id}`, this.options)).json() as SpotifyPlaylist;
 		const sets = Math.ceil(playlistInfo.tracks.total / 50);
 
 		let items: SpotifyTrack[] = [];
@@ -140,7 +149,7 @@ export class SpotifyParser {
 			const params = new URLSearchParams();
 			params.set("limit", "50");
 			params.set("offset", String(set * 50));
-			const tracks = await (await fetch(`${BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json() as PlaylistItems;
+			const tracks = await (await fetch(`${SPOTIFY_BASE_URL}/playlists/${id}/tracks?${params}`, this.options)).json() as PlaylistItems;
 			items = items.concat(tracks.items.map(item => item.track));
 			if (set === 0) items.unshift();
 		}
@@ -160,7 +169,7 @@ export class SpotifyParser {
 		if (!id) throw new ReferenceError("The track ID was not provided");
 		if (typeof id !== "string") throw new TypeError(`The track ID must be a string, received type ${typeof id}`);
 
-		const track: SpotifyTrack = (await (await fetch(`${BASE_URL}/tracks/${id}`, this.options)).json()) as SpotifyTrack;
+		const track: SpotifyTrack = (await (await fetch(`${SPOTIFY_BASE_URL}/tracks/${id}`, this.options)).json()) as SpotifyTrack;
 
 		if (convert) return this.fetchTrack(track, fetchOptions) as unknown as LavalinkTrack;
 		return track;
@@ -185,23 +194,23 @@ export class SpotifyParser {
 		params.append("identifier", `ytsearch: ${title}`);
 
 		const { host, port, password } = this.nodes;
-		const { tracks } = await (await fetch(`http://${host}:${port}/loadtracks?${params}`, {
+		const { data } = await (await fetch(`http://${host}:${port}/v4/loadtracks?${params}`, {
 			headers: {
 				Authorization: password
 			}
 		})).json() as LavalinkSearchResult;
 
-		if (!tracks.length) return null;
+		if (!data.length) return null;
 
 		if (fetchOptions.prioritizeSameDuration) {
-			const sameDuration = tracks.filter(searchResult => (searchResult.info.length >= (track.duration_ms - 1500)) && (searchResult.info.length <= (track.duration_ms + 1500)))[0];
+			const sameDuration = data.filter(searchResult => (searchResult.info.length >= (track.duration_ms - 1500)) && (searchResult.info.length <= (track.duration_ms + 1500)))[0];
 			if (sameDuration) return sameDuration;
 		}
 
 		if (typeof fetchOptions.customFilter === "undefined") fetchOptions.customFilter = () => true;
 		if (typeof fetchOptions.customSort === "undefined") fetchOptions.customSort = () => 0;
 
-		return tracks
+		return data
 			.filter(searchResult => fetchOptions.customFilter(searchResult, track))
 			.sort((comparableTrack, compareToTrack) => fetchOptions.customSort(comparableTrack, compareToTrack, track))[0];
 	}
