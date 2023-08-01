@@ -4,14 +4,14 @@
         "allowSyntheticDefaultImports": true,
         "declaration": true,
         "declarationMap": true,
-        "lib": ["esnext"],
-        "module": "commonjs",
-        "moduleResolution": "node",
+        "lib": ["ESNext"],
+        "module": "Node16",
+        "moduleResolution": "Node",
         "outDir": "dist",
         "pretty": true,
+        "skipLibCheck": true,
         "strict": true,
-        "target": "esnext",
-        "skipLibCheck": true
+        "target": "ES2020"
     },
     "include": [
         "src"
