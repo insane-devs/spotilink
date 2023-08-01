@@ -11,7 +11,7 @@
         "pretty": true,
         "strict": true,
         "target": "esnext",
-        "types": ["node", "node-fetch", "ws"]
+        "types": ["node", "ws"]
     },
     "include": [
         "./src/**/*"
