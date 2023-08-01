@@ -10,8 +10,7 @@
         "outDir": "./dist",
         "pretty": true,
         "strict": true,
-        "target": "esnext",
-        "types": ["node", "ws"]
+        "target": "esnext"
     },
     "include": [
         "./src/**/*"
